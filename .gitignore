@@ -32,3 +32,9 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Disable CSS - live compile from scss
+*.css
+*.css.map
+*.min.css
+*.min.css.map
