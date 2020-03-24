@@ -39,4 +39,4 @@ lerna-debug.log*
 *.min.css
 *.min.css.map
 
-data.js
+src/data.ts

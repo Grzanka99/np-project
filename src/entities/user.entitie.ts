@@ -6,6 +6,9 @@ export class User {
   id: number;
 
   @Column()
+  indexNumber: number;
+
+  @Column()
   firstName: string;
 
   @Column()
@@ -15,5 +18,5 @@ export class User {
   email: string;
 
   @Column()
-  add_date: Timestamp;
+  specialization: string;
 }
