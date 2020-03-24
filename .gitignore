@@ -38,3 +38,5 @@ lerna-debug.log*
 *.css.map
 *.min.css
 *.min.css.map
+
+data.js

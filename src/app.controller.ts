@@ -1,4 +1,5 @@
-import { Controller, Get, Render, Post } from '@nestjs/common';
+import { Controller, Get, Render, Post, Body } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller()
 export class AppController {
@@ -16,9 +17,7 @@ export class AppController {
   }
 
   @Post('/register')
-  create(): object {
-    return {
-      msg: 'Registering endpoint',
-    };
+  async show(@Body() createUserDto: CreateUserDto) {
+    return createUserDto;
   }
 }
