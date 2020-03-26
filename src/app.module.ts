@@ -1,8 +1,10 @@
+import { AppService } from './app.service';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
-import { User } from './entities/user.entitie';
+import { User } from './app.entitie';
 import data from './data';
+import { Connection } from 'typeorm';
 
 @Module({
   imports: [
@@ -16,8 +18,11 @@ import data from './data';
       entities: [User],
       synchronize: true,
     }),
+    TypeOrmModule.forFeature([User]),
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private connection: Connection) {}
+}
