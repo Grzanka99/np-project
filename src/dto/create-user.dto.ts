@@ -4,4 +4,5 @@ export class CreateUserDto {
   readonly email: string;
   readonly indexNumber: number;
   readonly specialization: number;
+  readonly avg: number;
 }

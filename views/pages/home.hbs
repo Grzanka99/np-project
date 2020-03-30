@@ -1,4 +1,4 @@
-<form action="/register" method="post" id="app" class="form">
+<form action="/register" method="post" id="app" class="form" @submit="send">
   <input
     type="text"
     name="firstname"
@@ -23,7 +23,26 @@
     class="input"
     data-type="email"
   />
-  {[ formData ]}
+  <input
+    type="text"
+    name="index"
+    v-model="formData.indexnumber"
+    @input="check"
+    class="input"
+    data-type="index"
+  />
+  <input
+    type="text"
+    name="avg"
+    v-model="formData.avg"
+    @input="check"
+    class="input"
+    data-type="avg"
+  />
+  <select name="spec" id="spec" v-model="formData.spec">
+    <option v-for="(s, i) in spec" :value="i" :key="s">{[ s ]}</option>
+  </select>
+  <button type="submit">Zapisz mnie!</button>
 </form>
 
 <script>
@@ -34,17 +53,24 @@
       formData: {
         firstname: '',
         lastname: '',
+        email: '',
+        indexnumber: '',
+        avg: '',
+        spec: 0,
       },
       types: {
         name: '^([A-ZĘÓĄŚŁŻŹĆŃ]{1})+([a-zęóąśłżźćń])+$',
+        email: '^([a-z]{6})+([0-9]{3})+(@utp.edu.pl)$',
+        index: '^([0-9]{6})$',
+        avg: '^([0-5]{1})(.{1})([0-9]{1,2})$',
       },
+      spec: SPEC,
     },
     methods: {
       check({ target }) {
         const { value, dataset } = target;
         if (value.length < 3) {
           target.classList.remove('input__ok', 'input__err');
-          console.log('err');
         } else {
           if (value.match(this.types[dataset.type])) {
             target.classList.add('input__ok');
@@ -54,6 +80,22 @@
             target.classList.remove('input__ok');
           }
         }
+      },
+
+      async send(event) {
+        event.preventDefault();
+        const dataToSend = {
+          firstname: this.formData.firstname,
+          lastname: this.formData.lastname,
+          email: this.formData.email,
+          indexNumber: Number(this.formData.indexnumber),
+          specialization: Number(this.formData.spec),
+          avg: Number(this.formData.avg),
+        };
+
+        axios.post('/register', dataToSend).then((res, err) => {
+          console.log(res);
+        });
       },
     },
   });

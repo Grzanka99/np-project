@@ -20,6 +20,6 @@ export class User {
   @Column()
   specialization: string;
 
-  @Column()
+  @Column({ type: 'float' })
   avg: number;
 }

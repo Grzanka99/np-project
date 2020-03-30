@@ -95,6 +95,7 @@ export class AppService {
             lastName: user.lastname,
             email: user.email,
             specialization: SPEC[user.specialization],
+            avg: user.avg,
           },
         ])
         .execute();
