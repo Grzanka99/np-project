@@ -19,4 +19,7 @@ export class User {
 
   @Column()
   specialization: string;
+
+  @Column()
+  avg: number;
 }

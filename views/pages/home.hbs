@@ -1,1 +1,60 @@
-<h1>Cezary Grzanka</h1>
+<form action="/register" method="post" id="app" class="form">
+  <input
+    type="text"
+    name="firstname"
+    v-model="formData.firstname"
+    @input="check"
+    class="input"
+    data-type="name"
+  />
+  <input
+    type="text"
+    name="lastname"
+    v-model="formData.lastname"
+    @input="check"
+    class="input"
+    data-type="name"
+  />
+  <input
+    type="text"
+    name="email"
+    v-model="formData.email"
+    @input="check"
+    class="input"
+    data-type="email"
+  />
+  {[ formData ]}
+</form>
+
+<script>
+  var app = new Vue({
+    delimiters: ['{[', ']}'],
+    el: '#app',
+    data: {
+      formData: {
+        firstname: '',
+        lastname: '',
+      },
+      types: {
+        name: '^([A-ZĘÓĄŚŁŻŹĆŃ]{1})+([a-zęóąśłżźćń])+$',
+      },
+    },
+    methods: {
+      check({ target }) {
+        const { value, dataset } = target;
+        if (value.length < 3) {
+          target.classList.remove('input__ok', 'input__err');
+          console.log('err');
+        } else {
+          if (value.match(this.types[dataset.type])) {
+            target.classList.add('input__ok');
+            target.classList.remove('input__err');
+          } else {
+            target.classList.add('input__err');
+            target.classList.remove('input__ok');
+          }
+        }
+      },
+    },
+  });
+</script>
