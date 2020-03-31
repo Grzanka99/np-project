@@ -5,21 +5,27 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: false })
   indexNumber: number;
 
-  @Column()
+  @Column({ nullable: false })
   firstName: string;
 
-  @Column()
+  @Column({ nullable: false })
   lastName: string;
 
-  @Column()
+  @Column({ nullable: false })
   email: string;
 
-  @Column()
+  @Column({ nullable: false })
   specialization: string;
 
   @Column({ type: 'float' })
   avg: number;
+
+  @Column({ nullable: false })
+  semester: number;
+
+  @Column({ default: false })
+  remote: boolean;
 }

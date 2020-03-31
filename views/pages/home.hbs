@@ -1,47 +1,100 @@
-<form action="/register" method="post" id="app" class="form" @submit="send">
-  <input
-    type="text"
-    name="firstname"
-    v-model="formData.firstname"
-    @input="check"
-    class="input"
-    data-type="name"
-  />
-  <input
-    type="text"
-    name="lastname"
-    v-model="formData.lastname"
-    @input="check"
-    class="input"
-    data-type="name"
-  />
-  <input
-    type="text"
-    name="email"
-    v-model="formData.email"
-    @input="check"
-    class="input"
-    data-type="email"
-  />
-  <input
-    type="text"
-    name="index"
-    v-model="formData.indexnumber"
-    @input="check"
-    class="input"
-    data-type="index"
-  />
-  <input
-    type="text"
-    name="avg"
-    v-model="formData.avg"
-    @input="check"
-    class="input"
-    data-type="avg"
-  />
-  <select name="spec" id="spec" v-model="formData.spec">
-    <option v-for="(s, i) in spec" :value="i" :key="s">{[ s ]}</option>
-  </select>
+<form id="app" class="form" @submit.prevent="send">
+  <div class="form__element">
+    <label for="firstname" id="firstname-label" class="form__element__label">
+      Imię:
+    </label>
+    <input
+      type="text"
+      name="firstname"
+      id="firstname-byid"
+      v-model="formData.firstname"
+      @input="check"
+      @focus="moveLabel"
+      class="input"
+      data-type="name"
+    />
+  </div>
+  <div class="form__element">
+    <label for="lastname" id="lastname-label" class="form__element__label">
+      Nazwisko:
+    </label>
+    <input
+      type="text"
+      name="lastname"
+      id="lastname-byid"
+      v-model="formData.lastname"
+      @input="check"
+      @focus="moveLabel"
+      class="input"
+      data-type="name"
+    />
+  </div>
+  <div class="form__element">
+    <label for="email" id="email-label" class="form__element__label"
+      >Adres email (@utp.edu.pl):</label
+    >
+    <input
+      type="text"
+      name="email"
+      id="email-byid"
+      v-model="formData.email"
+      @input="check"
+      @focus="moveLabel"
+      class="input"
+      data-type="email"
+    />
+  </div>
+  <div class="form__element">
+    <label for="index" id="index-label" class="form__element__label"
+      >Numer indeksu</label
+    >
+    <input
+      type="text"
+      name="index"
+      id="index-byid"
+      v-model="formData.indexnumber"
+      @input="check"
+      @focus="moveLabel"
+      class="input"
+      data-type="index"
+    />
+  </div>
+  <div class="form__element">
+    <label for="avg" id="avg-label" class="form__element__label">
+      Średnia ocen z poprzedniego semestru:
+    </label>
+    <input
+      type="text"
+      name="avg"
+      id="avg-byid"
+      v-model="formData.avg"
+      @input="check"
+      @focus="moveLabel"
+      class="input"
+      data-type="avg"
+    />
+  </div>
+  <div class="form__element form__spec">
+    <label for="spec" class="form__element__label">Kierunek:</label>
+    <select name="spec" id="spec" v-model="formData.spec">
+      <option v-for="(s, i) in spec" :value="i" :key="s">{[ s ]}</option>
+    </select>
+  </div>
+  <div class="form__semester form__element">
+    <label for="sem" class="form__element__label">Semestr:</label>
+    <select name="sem" id="sem" v-model="formData.sem">
+      <option v-for="n in (1,8)" :value="n" :key="n">Semestr {[ n ]}</option>
+    </select>
+    <div class="form__semester__checkbox">
+      <label for="remote">Czy zaoczne</label>
+      <input
+        type="checkbox"
+        name="remote"
+        class="form__semester__checkbox__box"
+        id="isRemote"
+      />
+    </div>
+  </div>
   <button type="submit">Zapisz mnie!</button>
 </form>
 
@@ -57,33 +110,47 @@
         indexnumber: '',
         avg: '',
         spec: 0,
+        sem: 1,
       },
       types: {
         name: '^([A-ZĘÓĄŚŁŻŹĆŃ]{1})+([a-zęóąśłżźćń])+$',
         email: '^([a-z]{6})+([0-9]{3})+(@utp.edu.pl)$',
         index: '^([0-9]{6})$',
-        avg: '^([0-5]{1})(.{1})([0-9]{1,2})$',
+        avg: '^([2-5]{1})\\.([0-9]{1,2})$',
       },
       spec: SPEC,
+      err: false,
     },
     methods: {
       check({ target }) {
         const { value, dataset } = target;
         if (value.length < 3) {
           target.classList.remove('input__ok', 'input__err');
+          return false;
         } else {
           if (value.match(this.types[dataset.type])) {
             target.classList.add('input__ok');
             target.classList.remove('input__err');
+            return true;
           } else {
             target.classList.add('input__err');
             target.classList.remove('input__ok');
+            return false;
           }
         }
       },
 
+      moveLabel({ target }) {
+        document
+          .querySelector(`#${target.name}-label`)
+          .classList.add('form__element__label--moved');
+      },
+
       async send(event) {
-        event.preventDefault();
+        const err = [];
+
+        const $ = e => document.querySelector(e);
+
         const dataToSend = {
           firstname: this.formData.firstname,
           lastname: this.formData.lastname,
@@ -91,11 +158,29 @@
           indexNumber: Number(this.formData.indexnumber),
           specialization: Number(this.formData.spec),
           avg: Number(this.formData.avg),
+          semester: Number(this.formData.sem),
+          remote: document.querySelector('#isRemote').checked,
         };
 
-        axios.post('/register', dataToSend).then((res, err) => {
-          console.log(res);
-        });
+        if (!this.check({ target: $('#firstname-byid') }))
+          err.push('firstname');
+        if (!this.check({ target: $('#lastname-byid') })) err.push('lastname');
+        if (!this.check({ target: $('#email-byid') })) err.push('email');
+        if (!this.check({ target: $('#index-byid') })) err.push('index');
+        if (!this.check({ target: $('#avg-byid') })) err.push('avg');
+
+        this.err = err.length > 0;
+
+        if (this.err) {
+          err.forEach(el => {
+            $(`#${el}-byid`).classList.add('input__err');
+          });
+          console.error('Błąd w danych!');
+        } else {
+          axios.post('/register', dataToSend).then((res, err) => {
+            console.log(res);
+          });
+        }
       },
     },
   });
