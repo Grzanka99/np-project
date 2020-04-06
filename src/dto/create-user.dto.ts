@@ -5,4 +5,5 @@ export class CreateUserDto {
   readonly indexNumber: number;
   readonly specialization: number;
   readonly avg: number;
+  readonly remote: boolean;
 }

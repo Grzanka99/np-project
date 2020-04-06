@@ -96,6 +96,7 @@ export class AppService {
             email: user.email,
             specialization: SPEC[user.specialization],
             avg: user.avg,
+            remote: user.remote,
           },
         ])
         .execute();

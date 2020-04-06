@@ -1,4 +1,11 @@
+<div class="lds-ring" id="ring">
+  <div><h3>Wysłano!</h3></div>
+  <div><h3>Wysłano!</h3></div>
+  <div><h3>Wysłano!</h3></div>
+  <div><h3>Wysłano!</h3></div>
+</div>
 <form id="app" class="form" @submit.prevent="send">
+  <h1 v-if="" class="title">Zapisz się na kurs latanie dronem!</h1>
   <div class="form__element">
     <label for="firstname" id="firstname-label" class="form__element__label">
       Imię:
@@ -96,10 +103,11 @@
     </div>
   </div>
   <button type="submit">Zapisz mnie!</button>
+  <h2 v-if="servErrors" class="err">{[ servErrors ]}</h2>
 </form>
 
 <script>
-  var app = new Vue({
+  const app = new Vue({
     delimiters: ['{[', ']}'],
     el: '#app',
     data: {
@@ -115,11 +123,13 @@
       types: {
         name: '^([A-ZĘÓĄŚŁŻŹĆŃ]{1})+([a-zęóąśłżźćń])+$',
         email: '^([a-z]{6})+([0-9]{3})+(@utp.edu.pl)$',
-        index: '^([0-9]{6})$',
+        index: '^([0-9]{5,6})$',
         avg: '^([2-5]{1})\\.([0-9]{1,2})$',
       },
       spec: SPEC,
       err: false,
+      servErrors: undefined,
+      sending: false,
     },
     methods: {
       check({ target }) {
@@ -159,7 +169,7 @@
           specialization: Number(this.formData.spec),
           avg: Number(this.formData.avg),
           semester: Number(this.formData.sem),
-          remote: document.querySelector('#isRemote').checked,
+          remote: $('#isRemote').checked,
         };
 
         if (!this.check({ target: $('#firstname-byid') }))
@@ -177,8 +187,25 @@
           });
           console.error('Błąd w danych!');
         } else {
+          this.sending = true;
+          const form = $('#app');
+          const ring = $('#ring');
+
+          form.classList.add('form--sending');
+          ring.classList.add('lds-ring--sending');
+
           axios.post('/register', dataToSend).then((res, err) => {
-            console.log(res);
+            const { status } = res.data;
+
+            if (status.name === 'ok') {
+              ring.classList.remove('lds-ring--sending');
+              ring.classList.add('lds-ring--sended');
+            } else {
+              form.classList.remove('form--sending');
+              ring.classList.remove('lds-ring--sending');
+              this.servErrors = status.message;
+              this.sending = false;
+            }
           });
         }
       },
