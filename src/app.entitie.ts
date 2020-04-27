@@ -23,7 +23,7 @@ export class User {
   @Column({ type: 'float' })
   avg: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, default: 1 })
   semester: number;
 
   @Column({ default: false })
